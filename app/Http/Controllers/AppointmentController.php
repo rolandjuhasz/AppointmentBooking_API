@@ -21,16 +21,13 @@ class AppointmentController extends Controller
         'appointment_time' => 'required|date_format:Y-m-d',
     ]);
 
-    // Csak akkor engedjük létrehozni, ha a felhasználónak van kurzusa
     $user = Auth::user();
     $course = Course::find($request->course_id);
 
-    // Ellenőrizzük, hogy a felhasználó szakember és a saját kurzusához ad időpontot
     if ($user->role !== 'expert' || $course->user_id !== $user->id) {
         return response()->json(['error' => 'Unauthorized to create appointment for this course'], 403);
     }
 
-    // Ha minden rendben, létrehozhatjuk az időpontot
     $appointment = new Appointment([
         'course_id' => $request->course_id,
         'appointment_time' => $request->appointment_time,
@@ -65,4 +62,12 @@ class AppointmentController extends Controller
 
         return response()->json(['message' => 'Appointment canceled'], 200);
     }
+
+    public function getAppointments($courseId)
+{
+    $appointments = Appointment::where('course_id', $courseId)->get();
+    
+    return response()->json($appointments);
+}
+
 }

@@ -10,7 +10,7 @@ class CourseController extends Controller
 {
     public function index()
     {
-        return Course::with('expert')->get();
+        return Course::with(['user', 'expert'])->get();
     }
 
     public function store(Request $request)
