@@ -15,26 +15,36 @@ class AppointmentController extends Controller
     }
 
     public function store(Request $request)
-    {
-        $request->validate([
-            'course_id' => 'required|exists:courses,id',
-            'appointment_time' => 'required|date|after:now',
-        ]);
+{
+    $request->validate([
+        'course_id' => 'required|exists:courses,id',
+        'appointment_time' => 'required|date_format:Y-m-d',
+    ]);
 
-        $course = Course::findOrFail($request->course_id);
+    // Csak akkor engedjük létrehozni, ha a felhasználónak van kurzusa
+    $user = Auth::user();
+    $course = Course::find($request->course_id);
 
-        if (Auth::id() === $course->user_id) {
-            return response()->json(['error' => 'You cannot book your own course'], 403);
-        }
-
-        $appointment = Appointment::create([
-            'user_id' => Auth::id(),
-            'course_id' => $request->course_id,
-            'appointment_time' => $request->appointment_time,
-        ]);
-
-        return response()->json($appointment, 201);
+    // Ellenőrizzük, hogy a felhasználó szakember és a saját kurzusához ad időpontot
+    if ($user->role !== 'expert' || $course->user_id !== $user->id) {
+        return response()->json(['error' => 'Unauthorized to create appointment for this course'], 403);
     }
+
+    // Ha minden rendben, létrehozhatjuk az időpontot
+    $appointment = new Appointment([
+        'course_id' => $request->course_id,
+        'appointment_time' => $request->appointment_time,
+        'user_id' => $user->id,
+    ]);
+
+    $appointment->save();
+
+    return response()->json([
+        'message' => 'Appointment created successfully',
+        'appointment' => $appointment,
+    ], 201);
+}
+
 
     public function show(Appointment $appointment)
     {

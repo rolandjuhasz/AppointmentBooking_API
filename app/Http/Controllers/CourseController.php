@@ -15,21 +15,28 @@ class CourseController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
+        $validated = $request->validate([
             'title' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'price' => 'nullable|numeric|min:0',
+            'description' => 'required|string',
+            'price' => 'required|numeric',
         ]);
-
-        $course = Course::create([
-            'user_id' => Auth::id(),
-            'title' => $request->title,
-            'description' => $request->description,
-            'price' => $request->price,
-        ]);
-
-        return response()->json($course, 201);
+    
+        if (Auth::user()->role !== 'expert') {
+            return response()->json([
+                'message' => 'Only experts can create courses.'
+            ], 403);
+        }
+    
+        $validated['user_id'] = Auth::id();
+    
+        $course = Course::create($validated);
+        return response()->json([
+            'message' => 'Course created successfully',
+            'course' => $course,
+        ], 201);
     }
+    
+    
 
     public function show(Course $course)
     {
