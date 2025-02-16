@@ -20,15 +20,16 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::put('/courses/{course}', [CourseController::class, 'update']); 
     Route::delete('/courses/{course}', [CourseController::class, 'destroy']);  
 
-    Route::get('/courses/{courseId}/appointments', [AppointmentController::class, 'getAppointments']);
-
+    
 });
 
+Route::get('/courses/{courseId}/appointments', [AppointmentController::class, 'getAppointments']);
 Route::get('/courses', [CourseController::class, 'index']);
 Route::get('/courses/{course}', [CourseController::class, 'show']);
 
+Route::get('/appointments', [AppointmentController::class, 'index']);  
+
 Route::middleware(['auth:sanctum'])->group(function () {
-    Route::get('/appointments', [AppointmentController::class, 'index']);  
     Route::post('/appointments', [AppointmentController::class, 'store']);   
     Route::get('/appointments/{appointment}', [AppointmentController::class, 'show']);  
     Route::delete('/appointments/{appointment}', [AppointmentController::class, 'destroy']); 

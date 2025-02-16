@@ -63,8 +63,7 @@ class AppointmentController extends Controller
         return response()->json(['message' => 'Appointment canceled'], 200);
     }
 
-    public function getAppointments($courseId)
-{
+    public function getAppointments($courseId){
     $appointments = Appointment::where('course_id', $courseId)->get();
     
     return response()->json($appointments);
