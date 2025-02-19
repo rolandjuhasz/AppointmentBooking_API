@@ -9,11 +9,16 @@ class Appointment extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['user_id', 'course_id', 'appointment_time'];
+    protected $fillable = ['created_by_id', 'user_id', 'course_id', 'appointment_time'];
 
-    public function user()
+    public function creator()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'created_by_id');
+    }
+
+    public function bookedBy()
+    {
+        return $this->belongsTo(User::class, 'user_id');
     }
 
     public function course()
@@ -21,3 +26,4 @@ class Appointment extends Model
         return $this->belongsTo(Course::class);
     }
 }
+
