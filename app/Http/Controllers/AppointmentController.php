@@ -29,8 +29,8 @@ class AppointmentController extends Controller
     $appointment = new Appointment([
         'course_id' => $request->course_id,
         'appointment_time' => $request->appointment_time,
-        'user_id' => null, // Kezdetben senki sem foglalta még le
-        'created_by_id' => $user->id, // A létrehozó felhasználó az aktuális user
+        'user_id' => null,
+        'created_by_id' => $user->id,
     ]);
 
     $appointment->save();
@@ -50,14 +50,24 @@ class AppointmentController extends Controller
     }
 
     public function destroy(Appointment $appointment){
-        if (Auth::id() !== $appointment->user_id) {
-            return response()->json(['error' => 'Unauthorized'], 403);
+        $user = Auth::user();
+    
+
+        if ($user->id === $appointment->user_id) {
+            $appointment->update(['user_id' => null]);
+            return response()->json(['message' => 'Your appointment booking has been canceled'], 200);
         }
+    
 
-        $appointment->delete();
-
-        return response()->json(['message' => 'Appointment canceled'], 200);
+        if ($user->id === $appointment->created_by_id) {
+            $appointment->delete();
+            return response()->json(['message' => 'Appointment has been deleted'], 200);
+        }
+    
+        return response()->json(['error' => 'Unauthorized'], 403);
     }
+    
+    
 
     public function getAppointments($courseId){
     $appointments = Appointment::where('course_id', $courseId)->get();
