@@ -14,10 +14,11 @@ class AppointmentController extends Controller
     }
 
     public function store(Request $request){
-    $request->validate([
-        'course_id' => 'required|exists:courses,id',
-        'appointment_time' => 'required|date_format:Y-m-d',
-    ]);
+        $request->validate([
+            'course_id' => 'required|exists:courses,id',
+            'appointment_time' => 'required|date_format:Y-m-d',
+        ]);
+        
 
     $user = Auth::user();
     $course = Course::find($request->course_id);

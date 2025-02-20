@@ -30,7 +30,7 @@ Route::get('/courses/{course}', [CourseController::class, 'show']);
 Route::get('/appointments', [AppointmentController::class, 'index']);  
 
 Route::middleware(['auth:sanctum'])->group(function () {
-    Route::post('/appointments', [AppointmentController::class, 'store']);   
+    Route::post('/appointments', [AppointmentController::class, 'store']);
     Route::get('/appointments/{appointment}', [AppointmentController::class, 'show']);  
     Route::delete('/appointments/{appointment}', [AppointmentController::class, 'destroy']); 
     Route::post('/appointments/{appointment}/book', [AppointmentController::class, 'bookAppointment']);
