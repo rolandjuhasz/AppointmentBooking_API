@@ -16,12 +16,12 @@ class AppointmentController extends Controller
     public function store(Request $request){
         $request->validate([
             'appointment_time' => 'required|date_format:Y-m-d',
-            'course_id' => 'required|exists:courses,id', // A kurzus ID kötelező és léteznie kell
+            'course_id' => 'required|exists:courses,id', 
         ]);
     
         $user = Auth::user();
     
-        // Ellenőrizzük, hogy a bejelentkezett user létrehozta-e ezt a kurzust
+
         $course = Course::where('id', $request->course_id)->where('user_id', $user->id)->first();
     
         if (!$course) {
@@ -33,7 +33,7 @@ class AppointmentController extends Controller
         }
     
         $appointment = new Appointment([
-            'course_id' => $request->course_id, // Itt most a frontendről kapott ID-t használjuk
+            'course_id' => $request->course_id,
             'appointment_time' => $request->appointment_time,
             'user_id' => null,
             'created_by_id' => $user->id,
