@@ -15,32 +15,39 @@ class AppointmentController extends Controller
 
     public function store(Request $request){
         $request->validate([
-            'course_id' => 'required|exists:courses,id',
             'appointment_time' => 'required|date_format:Y-m-d',
+            'course_id' => 'required|exists:courses,id', // A kurzus ID kötelező és léteznie kell
         ]);
-        
-
-    $user = Auth::user();
-    $course = Course::find($request->course_id);
-
-    if ($user->role !== 'expert' || $course->user_id !== $user->id) {
-        return response()->json(['error' => 'Unauthorized to create appointment for this course'], 403);
+    
+        $user = Auth::user();
+    
+        // Ellenőrizzük, hogy a bejelentkezett user létrehozta-e ezt a kurzust
+        $course = Course::where('id', $request->course_id)->where('user_id', $user->id)->first();
+    
+        if (!$course) {
+            return response()->json(['error' => 'No course found or unauthorized'], 404);
+        }
+    
+        if ($user->role !== 'expert') {
+            return response()->json(['error' => 'Unauthorized to create appointment'], 403);
+        }
+    
+        $appointment = new Appointment([
+            'course_id' => $request->course_id, // Itt most a frontendről kapott ID-t használjuk
+            'appointment_time' => $request->appointment_time,
+            'user_id' => null,
+            'created_by_id' => $user->id,
+        ]);
+    
+        $appointment->save();
+    
+        return response()->json([
+            'message' => 'Appointment created successfully',
+            'appointment' => $appointment,
+        ], 201);
     }
-
-    $appointment = new Appointment([
-        'course_id' => $request->course_id,
-        'appointment_time' => $request->appointment_time,
-        'user_id' => null,
-        'created_by_id' => $user->id,
-    ]);
-
-    $appointment->save();
-
-    return response()->json([
-        'message' => 'Appointment created successfully',
-        'appointment' => $appointment,
-    ], 201);
-}
+    
+    
 
     public function show(Appointment $appointment){
         if (Auth::id() !== $appointment->user_id) {
