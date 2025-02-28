@@ -19,8 +19,6 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/courses', [CourseController::class, 'store']);  
     Route::put('/courses/{course}', [CourseController::class, 'update']); 
     Route::delete('/courses/{course}', [CourseController::class, 'destroy']);  
-
-    
 });
 
 Route::get('/courses/{courseId}/appointments', [AppointmentController::class, 'getAppointments']);
@@ -34,5 +32,13 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/appointments/{appointment}', [AppointmentController::class, 'show']);  
     Route::delete('/appointments/{appointment}', [AppointmentController::class, 'destroy']); 
     Route::post('/appointments/{appointment}/book', [AppointmentController::class, 'bookAppointment']);
+   
+    Route::middleware('auth:sanctum')->post('/appointments/{id}/book', [AppointmentController::class, 'bookAppointment']);
 
 });
+
+// api.php
+
+Route::get('/email/verify/{id}/{hash}', [AuthController::class, 'verifyEmail'])->name('verification.verify');
+
+

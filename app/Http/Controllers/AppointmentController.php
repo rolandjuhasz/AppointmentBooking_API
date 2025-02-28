@@ -85,24 +85,22 @@ class AppointmentController extends Controller
     
 
     public function bookAppointment($id) {
-    $appointment = Appointment::find($id);
-
-    if (!$appointment) {
-        return response()->json(['error' => 'Appointment not found'], 404);
-    }
-
-    if ($appointment->user_id !== null) {
-        return response()->json(['error' => 'Appointment already booked'], 400);
-    }
-
-    $appointment->user_id = Auth::id();
-    $appointment->save();
-
-    return response()->json([
-        'message' => 'Appointment booked successfully',
-        'appointment' => $appointment,
-    ], 200);
-}
-
-
+        $appointment = Appointment::find($id);
+    
+        if (!$appointment) {
+            return response()->json(['error' => 'Appointment not found'], 404);
+        }
+    
+        if ($appointment->user_id !== null) {
+            return response()->json(['error' => 'Appointment already booked'], 400);
+        }
+    
+        $appointment->user_id = Auth::id();
+        $appointment->save();
+    
+        return response()->json([
+            'message' => 'Appointment booked successfully',
+            'appointment' => $appointment,
+        ], 200);
+    }    
 }
