@@ -28,6 +28,7 @@ Route::get('/courses/{course}', [CourseController::class, 'show']);
 Route::get('/appointments', [AppointmentController::class, 'index']);  
 
 Route::middleware(['auth:sanctum'])->group(function () {
+    Route::get('/appointments/{userId}', [AppointmentController::class, 'getAppointmentsForUser']);  // Az új végpont
     Route::post('/appointments', [AppointmentController::class, 'store']);
     Route::get('/appointments/{appointment}', [AppointmentController::class, 'show']);  
     Route::delete('/appointments/{appointment}', [AppointmentController::class, 'destroy']); 
@@ -37,7 +38,6 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
 });
 
-// api.php
 
 Route::get('/email/verify/{id}/{hash}', [AuthController::class, 'verifyEmail'])->name('verification.verify');
 

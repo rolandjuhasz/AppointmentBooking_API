@@ -9,9 +9,14 @@ use Illuminate\Support\Facades\Auth;
 
 class AppointmentController extends Controller
 {
-    public function index(){
-        return Appointment::with(['user', 'course'])->where('user_id', Auth::id())->get();
-    }
+public function index() {
+    $user = Auth::user();
+    $appointments = Appointment::with(['creator', 'bookedBy', 'course'])
+                               ->where('user_id', $user->id)
+                               ->get();
+
+    return response()->json($appointments);
+}
 
     public function store(Request $request){
         $request->validate([
@@ -76,11 +81,22 @@ class AppointmentController extends Controller
     }
     
     
-
-    public function getAppointments($courseId){
-    $appointments = Appointment::where('course_id', $courseId)->get();
+    public function getAppointments($courseId) {
+        $appointments = Appointment::with(['creator', 'bookedBy', 'course'])
+                                    ->where('course_id', $courseId)
+                                    ->get();
     
-    return response()->json($appointments);
+        return response()->json($appointments);
+    }
+
+    public function getAppointmentsForUser($userId){
+        $appointments = Appointment::where('user_id', $userId)->get();
+    
+        if ($appointments->isEmpty()) {
+            return response()->json(['message' => 'Nincsenek foglalások a felhasználóhoz.'], 404);
+        }
+    
+        return response()->json($appointments);
     }
     
 
