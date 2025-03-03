@@ -38,6 +38,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
 });
 
+Route::middleware('auth:sanctum')->get('/user/courses', [CourseController::class, 'getCoursesForUser']);
 
 Route::get('/email/verify/{id}/{hash}', [AuthController::class, 'verifyEmail'])->name('verification.verify');
 

@@ -89,15 +89,15 @@ public function index() {
         return response()->json($appointments);
     }
 
-    public function getAppointmentsForUser($userId){
-        $appointments = Appointment::where('user_id', $userId)->get();
-    
-        if ($appointments->isEmpty()) {
-            return response()->json(['message' => 'Nincsenek foglalások a felhasználóhoz.'], 404);
-        }
+    public function getAppointmentsForUser($userId)
+    {
+        $appointments = Appointment::where('user_id', $userId)
+            ->with(['creator', 'bookedBy' , 'course'])
+            ->get();
     
         return response()->json($appointments);
     }
+    
     
 
     public function bookAppointment($id) {

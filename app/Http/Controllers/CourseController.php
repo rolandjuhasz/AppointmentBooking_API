@@ -70,4 +70,11 @@ class CourseController extends Controller
 
         return response()->json(['message' => 'Course deleted'], 200);
     }
+
+    public function getCoursesForUser(){
+    $userId = auth()->id();
+
+    return Course::with(['user', 'expert'])->where('user_id', $userId)->get();
+}
+
 }
