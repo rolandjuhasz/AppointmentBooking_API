@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\AppointmentController;
+use App\Http\Controllers\ImageUploadController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -39,6 +40,11 @@ Route::middleware(['auth:sanctum'])->group(function () {
 });
 
 Route::middleware('auth:sanctum')->get('/user/courses', [CourseController::class, 'getCoursesForUser']);
+Route::middleware('auth:sanctum')->post('/user/avatar', [AuthController::class, 'updateAvatar']);
+Route::get('/user/avatar/{id}', [AuthController::class, 'getAvatar']);
+
+
+
 
 Route::get('/email/verify/{id}/{hash}', [AuthController::class, 'verifyEmail'])->name('verification.verify');
 
